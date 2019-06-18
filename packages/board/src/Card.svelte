@@ -45,7 +45,7 @@
 
   $: parentOf = (links.find(link => {
     return isParentOf(link);
-  }) || {}).target;
+  }) || {}).target ;
 
   $: childOf = (links.find(link => {
     return isChildOf(link);
@@ -150,7 +150,7 @@
     </div>
     {#if linksTo}
     <div class="board-card-links">
-      <CardLink item={ linksTo } type="LINKED_TO" />
+      <CardLink item={ linksTo } type="CONNECTS" />
     </div>
     {/if}
     {#if requiredBy}

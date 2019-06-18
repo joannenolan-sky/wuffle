@@ -3,7 +3,9 @@ const PARENT_OF = 'PARENT_OF';
 const DEPENDS_ON = 'DEPENDS_ON';
 const REQUIRED_BY = 'REQUIRED_BY';
 const LINKED_TO = 'LINKED_TO';
+const CONNECTS = 'CONNECTS';
 const CLOSES = 'CLOSES';
+const COMMENT_OF = 'COMMENT_OF';
 
 const phrasesToTypes = {
   'closes': CLOSES,
@@ -15,7 +17,8 @@ const phrasesToTypes = {
   'requires': DEPENDS_ON,
   'required by': REQUIRED_BY,
   'needed by': REQUIRED_BY,
-  'related to': LINKED_TO
+  'related to': LINKED_TO,
+  'connects to': CONNECTS
 };
 
 const linkTypes = {
@@ -24,7 +27,9 @@ const linkTypes = {
   DEPENDS_ON,
   REQUIRED_BY,
   LINKED_TO,
-  CLOSES
+  CONNECTS,
+  CLOSES,
+  COMMENT_OF
 };
 
 
@@ -37,7 +42,7 @@ function findLinks(issue, types) {
 
   const text = [ title, body ].join('\n --- \n').toLowerCase();
 
-  const pattern = /(closes|fixes|child of|parent of|depends on|needs|requires|required by|needed by|related to)\s+(?:(?:([a-z0-9-]+)\/([a-z0-9-]+))?#(\d+)|https:\/\/github.com\/([a-z0-9-]+)\/([a-z0-9-]+)\/(?:issues|pull)\/(\d+))/g;
+  const pattern = /(connects to|closes|fixes|child of|parent of|depends on|needs|requires|required by|needed by|related to)\s+(?:(?:([a-z0-9-]+)\/([a-z0-9-]+))?#(\d+)|https:\/\/github.com\/([a-z0-9-]+)\/([a-z0-9-]+)\/(?:issues|pull)\/(\d+))/g;
 
   const links = [];
 
@@ -83,6 +88,15 @@ function filterLinks(links, filterMap) {
   return links.filter(l => l.type in filterMap);
 }
 
+function getCommentLinks(issue, links) {
+  const {
+    comments
+  } = issue
+  if (issue.comment != 0) {
+    comments.url
+
+  }
+}
 module.exports.findLinks = findLinks;
 
 module.exports.linkTypes = linkTypes;

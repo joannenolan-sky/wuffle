@@ -29,6 +29,27 @@ describe('links', function() {
 
   });
 
+  it('should add link', function() {
+
+    // given
+    const links = new Links();
+
+    // when
+    const {
+      key,
+      link
+    } = links.addLink(1, 2, LinkTypes.LINKED_TO);
+
+    // then
+    expect(key).to.eql(`2-${LinkTypes.LINKED_TO}`);
+
+    expect(link).to.eql({
+      targetId: 2,
+      type: LinkTypes.LINKED_TO
+    });
+
+  });
+
 
   it('should retrieve self links', function() {
 
@@ -60,7 +81,7 @@ describe('links', function() {
     const links = new Links();
 
     links.addLink(2, 1, LinkTypes.CLOSES);
-    links.addLink(3, 1, LinkTypes.LINKED_TO);
+    links.addLink(3, 1, LinkTypes.CONNECTS);
     links.addLink(4, 1, LinkTypes.DEPENDS_ON);
     links.addLink(5, 1, LinkTypes.CHILD_OF);
 
@@ -70,6 +91,7 @@ describe('links', function() {
     // then
     expect(issueLinks).to.eql([
       { targetId: 2, type: LinkTypes.CLOSED_BY },
+      { targetId: 3, type: LinkTypes.LINKED_TO },
       { targetId: 4, type: LinkTypes.REQUIRED_BY },
       { targetId: 5, type: LinkTypes.PARENT_OF }
     ]);
@@ -109,7 +131,7 @@ describe('links', function() {
     const links = new Links();
 
     links.addLink(1, 2, LinkTypes.CLOSES);
-    links.addLink(1, 3, LinkTypes.LINKED_TO);
+    links.addLink(1, 3, LinkTypes.CONNECTS);
     links.addLink(4, 1, LinkTypes.DEPENDS_ON);
     links.addLink(5, 1, LinkTypes.CHILD_OF);
 
@@ -122,7 +144,7 @@ describe('links', function() {
     // then
     expect(issueLinks).to.eql([
       { targetId: 2, type: LinkTypes.CLOSES },
-      { targetId: 3, type: LinkTypes.LINKED_TO }
+      { targetId: 3, type: LinkTypes.CONNECTS }
     ]);
 
   });
@@ -134,7 +156,7 @@ describe('links', function() {
     const links = new Links();
 
     links.addLink(1, 2, LinkTypes.CLOSES);
-    links.addLink(1, 3, LinkTypes.LINKED_TO);
+    links.addLink(1, 3, LinkTypes.CONNECTS);
 
     // when
     const data = links.asJSON();
@@ -148,7 +170,7 @@ describe('links', function() {
     // then
     expect(issueLinks).to.eql([
       { targetId: 2, type: LinkTypes.CLOSES },
-      { targetId: 3, type: LinkTypes.LINKED_TO }
+      { targetId: 3, type: LinkTypes.CONNECTS }
     ]);
   });
 
