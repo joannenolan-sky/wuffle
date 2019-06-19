@@ -5,7 +5,6 @@ const REQUIRED_BY = 'REQUIRED_BY';
 const LINKED_TO = 'LINKED_TO';
 const CONNECTS = 'CONNECTS';
 const CLOSES = 'CLOSES';
-const COMMENT_OF = 'COMMENT_OF';
 
 const phrasesToTypes = {
   'closes': CLOSES,
@@ -28,8 +27,7 @@ const linkTypes = {
   REQUIRED_BY,
   LINKED_TO,
   CONNECTS,
-  CLOSES,
-  COMMENT_OF
+  CLOSES
 };
 
 
