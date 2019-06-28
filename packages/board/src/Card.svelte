@@ -136,6 +136,7 @@
         </a>
       </div>
     </div>
+
     {#each links_to_list as link}
     <div class="board-card-links">
       <CardLink item={link.target}  type="LINKED_TO" />
