@@ -186,6 +186,7 @@ module.exports = async (app, config, store) => {
       pull_request,
       issue
     } = context.payload;
+    log.info('Issue/PR request closed', context.payload.number)
 
     await Promise.all([
       pull_request ? moveReferencedIssues(context, pull_request, IN_PROGRESS, undefined, allButClosedLinkTypes) : Promise.resolve(),
@@ -198,6 +199,7 @@ module.exports = async (app, config, store) => {
     const {
       pull_request
     } = context.payload;
+    log.info('PR request ready_for_review', context.payload.number)
 
     await Promise.all([
       moveIssue(context, pull_request, NEEDS_REVIEW),
@@ -215,6 +217,7 @@ module.exports = async (app, config, store) => {
     } = context.payload;
 
     const newState = isDraft(pull_request) ? IN_PROGRESS : NEEDS_REVIEW;
+    log.info('PR request opened', context.payload.number, newState);
 
     await Promise.all([
       moveIssue(context, pull_request, newState),
@@ -229,6 +232,7 @@ module.exports = async (app, config, store) => {
     } = context.payload;
 
     const columns = getCurrentColumns(pull_request);
+    log.info('PR request edited', context.payload.number, columns);
 
     // move issue to reflect PR lazy reference
 
@@ -259,6 +263,7 @@ module.exports = async (app, config, store) => {
     }
 
     const issue_number = match[1];
+    log.info('Something created', context.payload.number, issue_number);
 
     return findAndMoveIssue(context, issue_number, IN_PROGRESS, assignee);
   });
