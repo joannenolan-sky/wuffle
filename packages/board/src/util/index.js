@@ -27,6 +27,7 @@ export {
   isClosingLink,
   isClosedByLink,
   isOpenOrMergedPull,
+  isOpenPullOrMergedPull,
   isLinkedTo,
   isDependentOn,
   isRequiredBy,

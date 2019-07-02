@@ -11,6 +11,12 @@ const IN_PROGRESS = 'In Progress';
 const NEEDS_REVIEW = 'Needs Review';
 const DONE = 'Done';
 
+const allButClosedLinkTypes = Object.keys(linkTypes).filter(linkType => {
+  return linkType !== CLOSES;
+}).reduce((filteredLinkTypes, linkType) => {
+  filteredLinkTypes[linkType] = linkTypes[linkType];
+  return filteredLinkTypes;
+}, {});
 
 /**
  * This component implements automatic movement of issues
@@ -111,7 +117,7 @@ module.exports = async (app, config, store) => {
       .then((issue) => issue && moveIssue(context, issue, newState, newAssignee));
   }
 
-  async function moveReferencedIssues(context, issue, newState, newAssignee) {
+  async function moveReferencedIssues(context, issue, newState, newAssignee, linkTypes) {
 
     // TODO(nikku): do that lazily, i.e. react to PR label changes?
     // would slower the movement but support manual moving-issue with PR
@@ -121,7 +127,7 @@ module.exports = async (app, config, store) => {
       owner: issueOwner
     } = context.repo();
 
-    const links = findLinks(issue, CLOSES).filter(link => {
+    const links = findLinks(issue, linkTypes).filter(link => {
       const {
         repo,
         owner
@@ -181,7 +187,10 @@ module.exports = async (app, config, store) => {
       issue
     } = context.payload;
 
-    await moveIssue(context, issue || pull_request, DONE);
+    await Promise.all([
+      pull_request ? moveReferencedIssues(context, pull_request, IN_PROGRESS, undefined, allButClosedLinkTypes) : Promise.resolve(),
+      moveIssue(context, issue || pull_request, DONE)
+    ]);
   });
 
   app.onActive('pull_request.ready_for_review', async (context) => {
