@@ -43,6 +43,7 @@
   $: parent_of_list  = links.filter(link => isParentOf(link))|| [];
 
   $: epic = parent_of_list.length > 0;
+  console.log(item.id, item.links);
 
   $: closed_by_list  = links.filter(link => (isClosedByLink(link) && isOpenOrMergedPull(link.target)))|| [];
 
