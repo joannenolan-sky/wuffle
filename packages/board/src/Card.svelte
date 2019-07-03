@@ -91,6 +91,9 @@
 <div class="board-card-container { className }" { ...otherProps }>
   <div class="board-card">
     <div class="header">
+      {#if epic }
+        <EpicIcon item={ item } linktype="PARENT_OF" />
+      {/if}
       {#if pull_request}
         <PullRequestIcon item={ item } />
       {/if}
