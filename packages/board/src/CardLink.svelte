@@ -1,6 +1,7 @@
 <script>
   import PullRequestIcon from './components/PullRequestIcon.svelte';
   import EpicIcon from './components/EpicIcon.svelte';
+  import Icons from './components/Icons.svelte';
 
   export let item;
 
