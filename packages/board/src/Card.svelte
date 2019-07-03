@@ -12,6 +12,7 @@
 
   import Tag from './components/Tag.svelte';
   import PullRequestIcon from './components/PullRequestIcon.svelte';
+  import EpicIcon from './components/EpicIcon.svelte';
 
   import CardLink from './CardLink.svelte';
 
@@ -40,6 +41,8 @@
   $: children_of_list  = links.filter(link => isChildOf(link))|| [];
 
   $: parent_of_list  = links.filter(link => isParentOf(link))|| [];
+
+  $: epic = parent_of_list.length > 0;
 
   $: closed_by_list  = links.filter(link => (isClosedByLink(link) && isOpenOrMergedPull(link.target)))|| [];
 
