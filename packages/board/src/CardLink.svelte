@@ -14,7 +14,7 @@
   $: repository = item.repository;
   $: pull_request = item.pull_request;
   $: child = type === 'CHILD_OF';
-  // console.log(item.id, type);
+  $: link = type === 'DEPENDS_ON'||'LINKED_TO'||'REQUIRED_BY';
 
   $: assignees = item.assignees;
 
@@ -77,6 +77,8 @@
       <PullRequestIcon item={ item } />
     {:else if child}
       <EpicIcon  item={ item }  linktype={ type }/>
+    {:else if link}
+        <Icons  item={ item }  linktype={ type }/>
     {/if}
 
     <a href={ cardUrl }
