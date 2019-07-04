@@ -2,6 +2,8 @@
   import PullRequestIcon from './components/PullRequestIcon.svelte';
   import EpicIcon from './components/EpicIcon.svelte';
   import Icons from './components/Icons.svelte';
+  import Comment from './components/Comment.svelte';
+
 
   export let item;
 
@@ -18,6 +20,11 @@
   $: link = type === 'DEPENDS_ON'||'LINKED_TO'||'REQUIRED_BY';
 
   $: assignees = item.assignees;
+
+  $: comments = item.comments > 0;
+  $: comment_count = item.comments;
+  // console.log(item.comments > 0,  item.comments);
+  // console.log(item);
 
   $: requested_reviewers = item.requested_reviewers || [];
 
@@ -101,6 +108,11 @@
           <img src="{ reviewer.avatar_url }&s=40" alt="{ reviewer.login } avatar" />
         </span>
       {/each}
-    </span>
+      </span>
+      {#if comments }
+         <Comment/><span class="comment" title={ title }>{ comment_count }</span>
+       {/if}
+
+
   </div>
 </div>

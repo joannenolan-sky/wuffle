@@ -13,6 +13,7 @@
   import Tag from './components/Tag.svelte';
   import PullRequestIcon from './components/PullRequestIcon.svelte';
   import EpicIcon from './components/EpicIcon.svelte';
+  import Comment from './components/Comment.svelte';
 
   import CardLink from './CardLink.svelte';
 
@@ -30,6 +31,9 @@
   $: labels = item.labels.filter(l => !l.column_label);
   $: pull_request = item.pull_request;
 
+  $: comments = item.comments > 0;
+  $: comment_count = item.comments;
+
   $: links = item.links;
 
   $: links_to_list = links.filter(link => isLinkedTo(link)) || [];
@@ -37,6 +41,7 @@
   $: dependent_on_list = links.filter(link => isDependentOn(link)) || [];
 
   $: required_by_list = links.filter(link => isRequiredBy(link)) || [];
+  console.log( item.links);
 
   $: children_of_list  = links.filter(link => isChildOf(link))|| [];
 
@@ -140,7 +145,11 @@
             </svg>
           </i>
         </a>
+        {#if comments }
+            <Comment/><span class="comment"  title={ title }>{ comment_count }</span>
+        {/if}
       </div>
+
     </div>
 
     {#each parent_of_list as parent}
