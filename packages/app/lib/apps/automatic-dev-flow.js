@@ -112,12 +112,12 @@ module.exports = async (app, config, store) => {
       });
   }
 
-  function findAndMoveIssue(context, number, newState, newAssignee) {
+  function findAndMoveIssue(context, number, newState, newAssignee, check) {
     return findIssue(context, number)
-      .then((issue) => issue && moveIssue(context, issue, newState, newAssignee));
+      .then((issue) => issue && moveIssue(context, issue, newState, newAssignee, check));
   }
 
-  async function moveReferencedIssues(context, issue, newState, newAssignee, linkTypes) {
+  async function moveReferencedIssues(context, issue, newState, newAssignee, linkTypes, check) {
 
     // TODO(nikku): do that lazily, i.e. react to PR label changes?
     // would slower the movement but support manual moving-issue with PR
@@ -148,19 +148,50 @@ module.exports = async (app, config, store) => {
         number
       } = link;
 
-      return findAndMoveIssue(context, number, newState, newAssignee);
+      return findAndMoveIssue(context, number, newState, newAssignee, check);
     }));
   }
 
-  function moveIssue(context, issue, newState, newAssignee) {
+  function checkIssueForOpenLinkedPR(context, issue) {
+    const {
+      repository,
+    } = context.payload;
+
+    const links = store.links.inverseLinks[repository.id + '-' + issue.number];
+
+    let x = Object.keys(links).map(linkKey => {
+
+      const link = links[linkKey];
+
+      const {
+        targetId
+      } = link;
+
+      let linkedIssue = store.getIssueById(targetId);
+      log.info(targetId, linkedIssue.state === 'open', linkedIssue.pull_request, (linkedIssue.state === 'open' && linkedIssue.pull_request));
+      return linkedIssue.state === 'open' && linkedIssue.pull_request;
+
+    }).some(function(currentState) {
+      return currentState === true;
+    });
+
+    log.info(x);
+    return x;
+
+  }
+
+  function moveIssue(context, issue, newState, newAssignee, check) {
 
     const {
       number: issue_number
     } = issue;
 
+    let openLinkedPrs = check ? checkIssueForOpenLinkedPR(context, issue): false;
+
+    log.info(openLinkedPrs && newState === IN_PROGRESS);
     const update = {
       ...getAssigneeUpdate(issue, newAssignee),
-      ...getStateUpdate(issue, newState)
+      ...getStateUpdate(issue, (openLinkedPrs && newState === IN_PROGRESS||DONE)? NEEDS_REVIEW: newState)
     };
 
     if (!hasKeys(update)) {
@@ -189,7 +220,7 @@ module.exports = async (app, config, store) => {
     log.info('Issue/PR request closed', context.payload.number);
 
     await Promise.all([
-      pull_request ? moveReferencedIssues(context, pull_request, IN_PROGRESS, undefined, allButClosedLinkTypes) : Promise.resolve(),
+      pull_request ? moveReferencedIssues(context, pull_request, IN_PROGRESS, undefined, allButClosedLinkTypes, true) : Promise.resolve(),
       moveIssue(context, issue || pull_request, DONE)
     ]);
   });

@@ -204,6 +204,7 @@ class Store {
 
     const existingIssue = this.issuesById[id];
 
+
     if (existingIssue) {
       delete this.issuesByKey[existingIssue.key];
 
