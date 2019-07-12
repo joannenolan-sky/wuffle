@@ -1,15 +1,13 @@
 <script>
     export let linktype;
-    export let item;
+    export let state;
 
     $: depends_ons = linktype === 'DEPENDS_ON';
     $: required_by = linktype === 'REQUIRED_BY';
     $: linked_to = linktype === 'LINKED_TO'||'CONNECTS';
 
-    $: open = item.state === 'open';
-    $: closed = item.state === 'closed';
-    $: depends_on_open = (depends_ons && open);
-    $: depends_on_closed = (depends_ons && closed);
+    $: depends_on_open = (depends_ons && state === 'open');
+    $: depends_on_closed = (depends_ons && state === 'closed');
 </script>
 
 {#if depends_on_open}

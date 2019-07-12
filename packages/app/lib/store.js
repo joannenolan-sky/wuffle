@@ -59,9 +59,9 @@ class Store {
     let order = this.getOrder(id);
 
     if (!order) {
-      const lastIssue = this.issues[this.issues.length - 1];
+      const firstIssue = this.issues[0];
 
-      order = this.computeOrder(id, null, lastIssue && lastIssue.id);
+      order = this.computeOrder(id, firstIssue && firstIssue.id, null);
 
       this.setOrder(id, order);
     }
@@ -273,7 +273,8 @@ class Store {
     this.log.info({ issue: issueIdent(issue) }, 'remove');
 
     const {
-      key
+      key,
+      repository
     } = issue;
 
     delete this.issuesById[id];
@@ -292,7 +293,13 @@ class Store {
 
     this.updates.add(id, {
       type: 'remove',
-      issue: { id }
+      // dummy placeholder for removed issues
+      issue: {
+        id,
+        key,
+        repository,
+        links: []
+      }
     });
   }
 

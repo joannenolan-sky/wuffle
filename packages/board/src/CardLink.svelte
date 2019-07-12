@@ -17,7 +17,7 @@
   $: child = type === 'CHILD_OF';
   $: link = type === 'DEPENDS_ON'||'LINKED_TO'||'REQUIRED_BY';
 
-  $: assignees = item.assignees;
+  $: assignees = item.assignees || [];
 
   $: requested_reviewers = item.requested_reviewers || [];
 
@@ -56,38 +56,32 @@
     }
   }
 
-  .card-impl {
-    background: #F9F9F9;
-    border-radius: 0 0 4px 4px;
-    margin-top: -6px;
-    box-shadow: inset 0 3px 5px -2px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
-    position: relative;
-    padding: 8px 8px 4px 8px;
+  .card-link .short-title {
+    flex: 1;
   }
 
   .card-link .assignee {
-    width: 1.1em;
-    height: 1.1em;
-    line-height: 1.1em;
+    height: 16px;
   }
 </style>
 
-<div class="card-link" class:card-impl={ type === 'CLOSES' }>
+<div class="card-link">
   <div class="header">
     {#if pull_request}
       <PullRequestIcon item={ item } />
     {:else if child}
-      <EpicIcon  item={ item }  linktype={ type }/>
+      <EpicIcon item={ item } linktype={ type }/>
     {:else if link}
-        <Icons  item={ item }  linktype={ type }/>
+      <Icons state={ item.state } linktype={ type }/>
     {/if}
 
     <a href={ cardUrl }
        target="_blank"
        rel="noopener noreferrer"
        class="issue-number"
+       title="{ repositoryName }#{ number }"
     >{ number }</a>
-    <span class="repository" title={ title }>{ title }</span>
+    <span class="short-title" title={ title }>{ title }</span>
 
     <span class="collaborator-links">
       {#each assignees as assignee}

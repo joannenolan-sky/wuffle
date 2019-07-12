@@ -1,6 +1,6 @@
 {
   "name": "wuffle-app",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "description": "The wuffle board back-end",
   "author": {
@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "dev": "nodemon",
-    "start": "probot run ./index.js",
+    "start": "node ./bin/run.js",
     "test": "mocha test --exit",
     "auto-test": "npm test -- --watch"
   },
@@ -58,7 +58,8 @@
       "."
     ],
     "ignore": [
-      "tmp/*"
+      "tmp/*",
+      "test/*"
     ]
   }
 }
