@@ -205,11 +205,20 @@
     {/if}
     <div class="footer">
       {#if milestone}
-        <Tag class="tag milestone" name={ milestone.title } />
+        <Tag
+          class="tag milestone"
+          name={ milestone.title }
+          onClick={ onSelect && handleSelection('milestone', milestone.title) }
+        />
       {/if}
 
       {#each labels as { name, color }}
-        <Tag class="tag label" color="#{ color }" name={ name } />
+        <Tag
+          class="tag label"
+          color="#{ color }"
+          name={ name }
+          onClick={ onSelect && handleSelection('label', name) }
+        />
       {/each}
 
       <div class="links">

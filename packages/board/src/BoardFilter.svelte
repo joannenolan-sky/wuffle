@@ -211,7 +211,7 @@
       allHints && keyboardSelectedHint && allHints.find(hint => hint.name === keyboardSelectedHint.name)
       || opts.keyboardSelectedHint
     );
-  };
+  }
 
   const searchId = Id();
 
@@ -291,7 +291,7 @@
         matchedCategories.push({
           name: category.name,
           values: matchedValues
-        })
+        });
       }
 
       return matchedCategories;
