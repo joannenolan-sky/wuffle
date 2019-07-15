@@ -46,6 +46,19 @@ module.exports = async (app, config, store) => {
 
     return store.updateIssue(filterIssue(issue, repository));
   });
+  //
+  // app.onActive([
+  //   'issue_comment.created',
+  //   'issue_comment.edited',
+  //   'issue_comment.deleted',
+  // ], async ({ payload }) => {
+  //   const {
+  //     issue,
+  //     repository
+  //   } = payload;
+  //
+  //   return store.updateIssue(filterIssue(issue, repository));
+  // });
 
   // available for issues only, we must manually
   // fetch the related pull request
