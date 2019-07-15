@@ -16,9 +16,9 @@ const { preExit } = require('../util');
  */
 module.exports = async (app, config, store) => {
 
-  if (process.env.NODE_ENV !== 'development') {
-    return;
-  }
+  // if (process.env.NODE_ENV !== 'development') {
+  //   return;
+  // }
 
   const log = app.log.child({
     name: 'wuffle:dump-store'

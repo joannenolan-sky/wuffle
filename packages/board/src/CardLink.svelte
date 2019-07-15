@@ -1,16 +1,11 @@
 <script>
   import PullRequestIcon from './components/PullRequestIcon.svelte';
-  import LinkIcon from './components/LinkIcon.svelte';
-
-  import {
-    hasModifier
-  } from './util';
+  import EpicIcon from './components/EpicIcon.svelte';
+  import Icons from './components/Icons.svelte';
 
   export let item;
 
   export let className = '';
-
-  export let onSelect;
 
   export let type;
 
@@ -19,28 +14,16 @@
   $: title = item.title;
   $: repository = item.repository;
   $: pull_request = item.pull_request;
+  $: child = type === 'CHILD_OF';
+  $: link = type === 'DEPENDS_ON'||'LINKED_TO'||'REQUIRED_BY';
 
-  $: assignees = item.assignees || [];
+  $: assignees = item.assignees;
 
   $: requested_reviewers = item.requested_reviewers || [];
 
   $: repositoryName = `${repository.owner.login}/${repository.name}`;
 
   $: cardUrl = `https://github.com/${ repositoryName }/issues/${ number }`;
-
-  function handleSelection(qualifier, value) {
-
-    return function(event) {
-
-      if (hasModifier(event)) {
-        return;
-      }
-
-      event.preventDefault();
-
-      onSelect(qualifier, value);
-    };
-  }
 </script>
 
 <style lang="scss">
@@ -50,68 +33,61 @@
     border-top: solid 1px #F0F0F0;
     margin-top: 1px;
     padding-top: 1px;
+
+    .link-type {
+      margin-right: 6px;
+      color: #999;
+    }
+
+    .link-depends-on {
+      color: red;
+    }
+
+    .link-required-by {
+      color: orange;
+    }
+
+    .link-related-to {
+      color: #999;
+    }
+
+    .link-part-of {
+      color: lightblue;
+    }
   }
 
-  .card-link .short-title {
-    flex: 1;
+  .card-impl {
+    background: #F9F9F9;
+    border-radius: 0 0 4px 4px;
+    margin-top: -6px;
+    box-shadow: inset 0 3px 5px -2px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding: 8px 8px 4px 8px;
   }
 
   .card-link .assignee {
-    height: 16px;
-  }
-
-  :global(.card-link) .epic {
-    color: #1d76db;
+    width: 1.1em;
+    height: 1.1em;
+    line-height: 1.1em;
   }
 </style>
 
-<div class="card-link">
+<div class="card-link" class:card-impl={ type === 'CLOSES' }>
   <div class="header">
     {#if pull_request}
       <PullRequestIcon item={ item } />
-    {:else}
-      {#if type === 'PARENT_OF'}
-        <LinkIcon
-          name="issue"
-          state={ item.state }
-          class="child-of"
-        />
-      {/if}
-
-      {#if type === 'CHILD_OF'}
-        <LinkIcon class="epic" name="epic" />
-      {/if}
-
-      {#if type === 'DEPENDS_ON' || type === 'CLOSED_BY'}
-        <LinkIcon
-          class="depends-on"
-          name="depends-on"
-          state={ item.state }
-        />
-      {/if}
-
-      {#if type === 'REQUIRED_BY' || type === 'CLOSES' }
-        <LinkIcon
-          class="issue"
-          name="issue"
-          state={ item.state }
-        />
-      {/if}
-
-      {#if type === 'LINKED_TO'}
-        <LinkIcon class="linked-to" name="linked-to" />
-      {/if}
+    {:else if child}
+      <EpicIcon  item={ item }  linktype={ type }/>
+    {:else if link}
+        <Icons  item={ item }  linktype={ type }/>
     {/if}
 
     <a href={ cardUrl }
        target="_blank"
        rel="noopener noreferrer"
        class="issue-number"
-       title="{ repositoryName }#{ number }"
-       on:click={ onSelect && handleSelection('ref', item.key) }
     >{ number }</a>
-
-    <span class="short-title" title={ title }>{ title }</span>
+    <span class="repository" title={ title }>{ title }</span>
 
     <span class="collaborator-links">
       {#each assignees as assignee}

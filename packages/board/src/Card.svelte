@@ -156,7 +156,6 @@
       {#if children.length}
         <EpicIcon item={ item } linkType="PARENT_OF" />
       {/if}
-
       {#if pull_request}
         <PullRequestIcon item={ item } />
       {/if}
@@ -206,20 +205,11 @@
     {/if}
     <div class="footer">
       {#if milestone}
-        <Tag
-          class="tag milestone"
-          name={ milestone.title }
-          onClick={ onSelect && handleSelection('milestone', milestone.title) }
-        />
+        <Tag class="tag milestone" name={ milestone.title } />
       {/if}
 
       {#each labels as { name, color }}
-        <Tag
-          class="tag label"
-          color="#{ color }"
-          name={ name }
-          onClick={ onSelect && handleSelection('label', name) }
-        />
+        <Tag class="tag label" color="#{ color }" name={ name } />
       {/each}
 
       <div class="links">
