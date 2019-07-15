@@ -69,7 +69,7 @@
 
     const columnItems = items[column];
 
-    shownItems[column] = columnItems.filter(item => !isClosingPull(item));
+    shownItems[column] = columnItems.filter(item => !isPRWithLinks(item));
 
     return shownItems;
   }, {});
@@ -545,10 +545,8 @@
     };
   }
 
-  function isClosingPull(item) {
-    return isPull(item) && isOpenOrMerged(item) && item.links.some(link => {
-      return isClosingLink(link) && itemsById[link.target.id];
-    });
+  function isPRWithLinks(item) {
+    return isOpenPullOrMergedPull(item) && item.links.length > 0
   }
 
   function checkRender(columnName) {
