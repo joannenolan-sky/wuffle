@@ -45,8 +45,18 @@
 </style>
 
 <script>
+  import { onMount } from 'svelte';
+
   export let className = '';
-  export let shown = true;
+  export let shown = false;
+
+  let realShown = false;
+
+  onMount(() => {
+    realShown = shown;
+  });
+
+  $: realShown = shown;
 </script>
 
 <div class="loader { className }" class:shown={ shown }>
