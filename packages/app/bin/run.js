@@ -22,6 +22,7 @@ const problems = [
 
 function isFatal(problem) {
   return problem.type === 'ERROR';
+§
 }
 
 function checkConfig() {
