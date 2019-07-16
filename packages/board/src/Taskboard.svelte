@@ -65,10 +65,9 @@
 
   // shown items
   $: shownItems = Object.keys(items).reduce((shownItems, column) => {
-
     const columnItems = items[column];
-
     shownItems[column] = columnItems.filter(item => !isPRWithLinks(item));
+
 
     return shownItems;
   }, {});

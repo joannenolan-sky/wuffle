@@ -78,7 +78,6 @@ module.exports = async (app, config, store) => {
   }
 
   function filterUpdates(req, updates) {
-
     const searchFilter = getIssueSearchFilter(req);
 
     return getIssueReadFilter(req).then(canAccess => {
