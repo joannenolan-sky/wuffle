@@ -8,6 +8,7 @@
   } from './util';
 
   import Tag from './components/Tag.svelte';
+  import Status from './components/Status.svelte';
   import PullRequestIcon from './components/PullRequestIcon.svelte';
   import EpicIcon from './components/EpicIcon.svelte';
 
@@ -56,7 +57,9 @@
     link => isPull(link.target) && isOpenOrMerged(link.target)
   ).filter(noDuplicates(link => link.target.id));
 
-  $: assignees = item.assignees;
+  $: status = item.statuses || [];
+
+  $: assignees = item.assignees || [];
 
   $: requested_reviewers = item.requested_reviewers || [];
 
@@ -154,7 +157,7 @@
   <div class="board-card">
     <div class="header">
       {#if children.length}
-        <EpicIcon item={ item } linkType="PARENT_OF" />
+        <EpicIcon item={ item } linkType="PARENT_OF"  onClick={ onSelect && handleSelection('ref', item.key) }/>
       {/if}
       {#if pull_request}
         <PullRequestIcon item={ item } />
@@ -231,6 +234,16 @@
       </div>
     </div>
 
+      {#if status.length }
+      <span class="links" >
+        {#each status as prStatus}
+        <a href={ prStatus.target_url } title={ prStatus.key } >
+            <Status state = { prStatus.state } count = {status.length} />
+        </a>
+        {/each}
+      </span>
+      {/if}
+
     {#if shownLinks.length}
       <div class="board-card-links embedded">
         {#each shownLinks as link}
@@ -244,9 +257,9 @@
   {#if prLinks.length}
     <div class="board-card-links attached">
       {#each prLinks as link}
-        <CardLink item={ link.target } type={ link.type } onSelect={ onSelect } />
+        <CardLink item={ link.target } type={ link.type } onSelect={ onSelect } status={ link.status } />
       {/each}
-    </div>
+  </div>
   {/if}
 
 </div>

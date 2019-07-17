@@ -45,6 +45,18 @@ module.exports = async (app, config, store) => {
     }).then(res => res.data);
   }
 
+  async function getStatuses(pull_request, repositoryName) {
+    let ref = pull_request.head.sha;
+    const [ owner, repo ] = repositoryName.split('/');
+    return app.orgAuth(owner).then(github => {
+      return github.repos.getCombinedStatusForRef({
+        owner,
+        repo,
+        ref
+      });
+    }).then(res => res.data);
+  }
+
   async function applyUpdate(update) {
 
     const {
@@ -65,6 +77,11 @@ module.exports = async (app, config, store) => {
     return { id };
   }
 
+  async function syncStatus(statuses) {
+    let combinedStatusesForIssues = await statuses;
+    return combinedStatusesForIssues.state !== 'pending'?
+      store.insertOrUpdateCombinedStatus(combinedStatusesForIssues): {};
+  }
   function syncPull(pull_request, repository) {
     return applyUpdate(filterPull(pull_request, repository));
   }
@@ -164,6 +181,7 @@ module.exports = async (app, config, store) => {
         }
 
         for (const pull_request of [ ...open_pull_requests, ...closed_pull_requests ]) {
+          await syncStatus(getStatuses(pull_request, repositoryName));
 
           const {
             id

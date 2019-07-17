@@ -11,6 +11,7 @@ const {
 } = require('./util/links');
 
 const { Links } = require('./links');
+const { Status } = require('./status');
 
 
 class Store {
@@ -24,6 +25,7 @@ class Store {
 
     this.updates = new Updates();
     this.links = new Links();
+    this.statuses = new Status();
 
     this.issuesByKey = {};
     this.issuesById = {};
@@ -36,9 +38,92 @@ class Store {
     return this.columns.getForIssue(issue);
   }
 
-  async updateIssue(issue, newColumn, newOrder) {
+  async updateStatus(status) {
 
-    const t = Date.now();
+    const {
+      sha,
+      contexts,
+    } = status;
+
+    if (!sha) {
+      throw new Error('{ sha } required');
+    }
+
+    if (!contexts) {
+      throw new Error('{ context } required');
+    }
+
+
+    status = this.insertOrUpdateSingleStatus(status);
+
+    return status;
+  }
+
+  insertOrUpdateCombinedStatus(combinedStatusesForIssues) {
+    const {
+      sha,
+      statuses
+    } = combinedStatusesForIssues;
+
+    const existingStatus = this.statuses.statuses[sha];
+    let contexts ={};
+
+    statuses.forEach(function(status) {
+      const {
+        context,
+        state,
+        target_url
+      } = status;
+
+      return contexts[context.toUpperCase()] = {
+        target_url,
+        state
+      };
+    });
+
+    if (existingStatus) {
+      Object.keys(existingStatus).forEach(function(x) {
+        if (existingStatus[x]) {
+          delete existingStatus[x];
+        }
+        existingStatus[x] = contexts[x];
+      });
+      this.statuses.statuses[sha] = existingStatus;
+    } else {
+      this.statuses.statuses[sha] = contexts;
+    }
+    const context = this.statuses.statuses[sha];
+
+    return {
+      sha,
+      context
+    };
+  }
+
+  insertOrUpdateSingleStatus(status) {
+
+    const {
+      sha,
+      key,
+      contexts
+    } = status;
+
+    const existingStatus = this.statuses.statuses[sha];
+
+    if (existingStatus) {
+      const existingContext = Object.keys(existingStatus).find(contextKey => contextKey === key);
+      if (existingContext) {
+        delete existingContext[key];
+      }
+      existingStatus[key] = contexts[key];
+      this.statuses.statuses[sha] = existingStatus;
+    } else {
+      this.statuses.statuses[sha] = contexts;
+    }
+    return this.statuses.statuses[sha];
+  }
+
+  async updateIssue(issue, column) {
 
     const {
       id,
@@ -58,51 +143,44 @@ class Store {
       throw new Error('{ repository } required');
     }
 
-    const ident = issueIdent(issue);
+    let order = this.getOrder(id);
 
-    this.log.debug({
-      issue: ident,
-      newColumn,
-      newOrder
-    }, 'issue update');
+    if (!order) {
+      const firstIssue = this.issues[0];
 
-    const {
-      touchedIssues,
-      links
-    } = this.updateLinks(issue);
+      order = this.computeOrder(id, firstIssue && firstIssue.id, null);
 
-    const column = newColumn || this.getIssueColumn(issue);
+      this.setOrder(id, order);
+    }
 
-    // automatically compute desired order unless
-    // the order is provided by the user
-    //
-    // this ensures the board is automatically pre-sorted
-    // as links are being created and removed on GitHub
-    const order = newOrder || this.computeLinkedOrder(
-      issue, column,
-      this.getOrder(id),
-      links
-    );
+    column = column || this.getIssueColumn(issue);
 
-    issue = this.insertOrUpdateIssue({
+    issue = {
       ...issue,
       order,
       column
-    });
+    };
 
-    const updatedIssues = [ ...touchedIssues, issue ];
+    this.log.info({ issue: issueIdent(issue), column, order }, 'update');
+
+    issue = this.insertOrUpdateIssue(issue);
+
+    const linkedIssues = this.updateLinks(issue);
+
+    // const status = this.updateStatusId(issue);
+
+    const updatedIssues = [ issue, ...linkedIssues ];
 
     for (const issue of updatedIssues) {
       this.updates.add(issue.id, {
         type: 'update',
         issue: {
           ...issue,
-          links: this.getIssueLinks(issue)
+          links: this.getIssueLinks(issue),
+          statuses: this.getIssueStatus(issue)
         }
       });
     }
-
-    this.log.info({ issue: ident, column, order, t: Date.now() - t }, 'issue updated');
 
     return issue;
   }
@@ -339,6 +417,28 @@ class Store {
     return linked;
   }
 
+  getIssueStatus(issue) {
+    let currentStatus = [];
+    if (issue.pull_request) {
+
+      let status = this.statuses.statuses[issue.head.sha] || {};
+
+      currentStatus = Object.keys(status).map(function(key) {
+        const {
+          state,
+          target_url
+        } = status[key];
+
+        return {
+          key: key,
+          state,
+          target_url
+        };
+      });
+    }
+
+    return currentStatus;
+  }
   async removeIssueById(id) {
 
     const issue = this.getIssueById(id);
@@ -427,7 +527,8 @@ class Store {
       this.boardCache || groupBy(this.issues.map(issue => {
         return {
           ...issue,
-          links: this.getIssueLinks(issue)
+          links: this.getIssueLinks(issue),
+          statuses : this.getIssueStatus(issue)
         };
       }), i => i.column)
     );
@@ -453,14 +554,16 @@ class Store {
       issues,
       lastSync,
       issueOrder,
-      links
+      links,
+      statuses
     } = this;
 
     return JSON.stringify({
       issues,
       lastSync,
       issueOrder,
-      links: links.asJSON()
+      links: links.asJSON(),
+      statuses: statuses.asJSON()
     });
   }
 
@@ -473,7 +576,8 @@ class Store {
       issues,
       lastSync,
       issueOrder,
-      links
+      links,
+      statuses
     } = JSON.parse(json);
 
     this.issues = issues || [];
@@ -482,6 +586,9 @@ class Store {
 
     if (links) {
       this.links.loadJSON(links);
+    }
+    if (statuses) {
+      this.statuses.loadJSON(statuses);
     }
 
     this.issuesById = this.issues.reduce((map, issue) => {

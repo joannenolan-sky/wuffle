@@ -7,6 +7,7 @@
   } from './util';
 
   export let item;
+  export let status;
 
   export let className = '';
 
@@ -25,6 +26,7 @@
   $: requested_reviewers = item.requested_reviewers || [];
 
   $: repositoryName = `${repository.owner.login}/${repository.name}`;
+
 
   $: cardUrl = `https://github.com/${ repositoryName }/issues/${ number }`;
 
@@ -79,7 +81,7 @@
       {/if}
 
       {#if type === 'CHILD_OF'}
-        <LinkIcon class="epic" name="epic" />
+        <LinkIcon class="epic" name="epic" onClick={ onSelect && handleSelection('ref', item.key) }/>
       {/if}
 
       {#if type === 'DEPENDS_ON' || type === 'CLOSED_BY'}
