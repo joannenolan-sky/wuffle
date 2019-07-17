@@ -159,6 +159,7 @@
       {#if children.length}
         <EpicIcon item={ item } linkType="PARENT_OF"  onClick={ onSelect && handleSelection('ref', item.key) }/>
       {/if}
+
       {#if pull_request}
         <PullRequestIcon item={ item } />
       {/if}

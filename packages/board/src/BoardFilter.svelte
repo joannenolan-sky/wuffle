@@ -207,9 +207,11 @@
 
     match = opts.match;
     allHints = opts.allHints;
+
     keyboardSelectedHint = (
-      allHints && keyboardSelectedHint && allHints.find(hint => hint.name === keyboardSelectedHint.name)
-      || opts.keyboardSelectedHint
+      allHints && keyboardSelectedHint && allHints.find(
+        hint => hint.name === keyboardSelectedHint.name
+      ) || opts.keyboardSelectedHint
     );
   }
 
@@ -223,15 +225,13 @@
 
     value = value.substring(searchStart, searchEnd).toLowerCase();
 
-    const match = /^([-!]?)(?:([\w]+)(?:(\:)(?:"([\w-]+)"?|([\w-]+))?)?)$/.exec(value);
+    const match = /^([-!]?)(?:([\w]+)(?:(:)(?:"([\w-]+)"?|([\w-]+))?)?)$/.exec(value);
 
     if (!match) {
       return {};
     }
 
     let [ _, negator, qualifier, sep, qualifierText, qualifierTextEscaped ] = match;
-
-    const qualifierValue = qualifierText || qualifierTextEscaped;
 
     const search = sep ? (qualifierText || qualifierTextEscaped || '') : qualifier;
 
@@ -423,7 +423,7 @@
 
 <div class="input-prefixed board-filter { className } { expanded && 'expanded' }">
   <label class="prefix" for={searchId}>
-    <Icon class="icon" className="BOO">
+    <Icon class="icon">
       <SearchIcon />
     </Icon>
   </label>
@@ -459,7 +459,7 @@
                 class:active={ selectedHint && selectedHint.name === value.name }
                 on:mouseover={ () => mouseSelectedHint = value }
                 on:mouseout={ () => mouseSelectedHint = null }
-                on:mousedown={ (event) => { event.preventDefault(); applyHint(mouseSelectedHint) } }
+                on:mousedown={ (event) => { event.preventDefault(); applyHint(mouseSelectedHint); } }
               >{#each value.parts as part}<span class:matched={ part.matched }>{ part.text }</span>{/each}</li>
             {/if}
           {/each}
