@@ -137,3 +137,14 @@
     right: -3px;
   }
 }
+.status {
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  display: inline-block;
+  height: 8px;
+
+}
+.status a {
+  height: 16px;
+}
