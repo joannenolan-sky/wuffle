@@ -407,9 +407,15 @@ class Store {
           targetId
         } = link;
 
+        const targetIssue = this.getIssueById(targetId);
+        const targetStatus = this.getIssueStatus(targetIssue);
+        if (targetIssue.id === '190436221-26') {
+          this.log.info(targetStatus);
+        }
         return {
           type,
-          target: this.getIssueById(targetId)
+          target: targetIssue,
+          status: targetStatus
         };
       }).filter(link => link.target);
     }
