@@ -37,6 +37,7 @@
     list-style: none;
     display: inline-block;
     height: auto;
+
     margin: 0 4px 4px 0;
     padding: 1px 7px;
 
@@ -45,7 +46,6 @@
 
     line-height: 20px;
     white-space: nowrap;
-
 
     overflow:hidden;
     cursor: default;

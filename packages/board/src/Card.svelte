@@ -165,7 +165,6 @@
          rel="noopener noreferrer"
          class="issue-number"
          title="{ repositoryName }#{ number }"
-         on:click={ handleSelection('ref', item.key) }
       >{ number }</a>
 
       <span class="repository" title={ repositoryName }>{ repositoryName }</span>

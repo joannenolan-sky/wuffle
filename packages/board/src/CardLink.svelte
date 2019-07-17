@@ -50,7 +50,7 @@
     border-top: solid 1px #F0F0F0;
     margin-top: 1px;
     padding-top: 1px;
-    }
+  }
 
   .card-link .short-title {
     flex: 1;
