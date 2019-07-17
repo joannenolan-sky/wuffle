@@ -1,6 +1,7 @@
 const {
   filterIssue,
   filterPull,
+  filterStatus,
   filterIssueOrPull,
   getIdentifier
 } = require('../filters');
@@ -104,6 +105,15 @@ module.exports = async (app, config, store) => {
     } = payload;
 
     return store.updateIssue(filterPull(pull_request, repository));
+  });
+
+
+  app.onActive([
+    'status'
+  ], async ({ payload }) => {
+
+    return store.updateStatus(filterStatus(payload));
+
   });
 
 };
