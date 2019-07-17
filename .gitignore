@@ -1,5 +1,6 @@
 logs
 *.log
+.idea
 npm-debug.log*
 .DS_Store
 
