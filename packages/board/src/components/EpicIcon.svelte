@@ -11,4 +11,4 @@
 
   <path fill="currentColor" stroke="#1d76db" d="M1 15V4l5-3 5 3v11l-5-4-5 4z" stroke-width="1.5" />
 
-    </svg>
+</svg>
