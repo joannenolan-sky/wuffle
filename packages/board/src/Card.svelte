@@ -39,7 +39,7 @@
   $: pull_request = item.pull_request;
 
   $: links = item.links || [];
-
+// console.log( item.links );
   $: embeddedLinks = links.filter(
     (link) => !isPull(link.target) && link.type !== 'LINKED_BY'
   ).sort(
@@ -238,7 +238,7 @@
       <span class="links" >
         {#each status as prStatus}
         <a href={ prStatus.target_url } title={ prStatus.key } >
-            <Status state = { prStatus.state } count = {status.length} />
+            <Status state = { prStatus.state }/>
         </a>
         {/each}
       </span>

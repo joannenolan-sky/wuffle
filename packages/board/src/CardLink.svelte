@@ -23,7 +23,6 @@
   $: pull_request = item.pull_request;
 
   $: status = status || [];
-  console.log(item);
 
   $: assignees = item.assignees || [];
 
@@ -136,7 +135,7 @@
         <span class =statsus>
           {#each status as prStatus}
           <a href={ prStatus.target_url } title={ prStatus.key } >
-              <Status state = {prStatus.state} status = { prStatus } />
+              <Status state = {prStatus.state}/>
           </a>
           {/each}
         </span>

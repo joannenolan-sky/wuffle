@@ -5,6 +5,7 @@
   $: pending = state === 'pending';
   $: success = state === 'success';
   $: failure = state === 'failure';
+  $: onClick = onClick || '';
 </script>
 
 
