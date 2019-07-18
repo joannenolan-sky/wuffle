@@ -16,7 +16,6 @@
     Id,
     createLocalStore,
     createHistory,
-    isClosingLink,
     isOpenOrMerged,
     isPull,
     periodic,
@@ -512,7 +511,7 @@
   }
 
   function isPRWithLinks(item) {
-    return isPull(item) && isOpenOrMerged(item) && item.links.length > 0
+    return isPull(item) && isOpenOrMerged(item) && item.links.length > 0;
   }
 
   function checkRender(columnName) {
