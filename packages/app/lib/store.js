@@ -419,9 +419,7 @@ class Store {
 
         const targetIssue = this.getIssueById(targetId);
         const targetStatus = this.getIssueStatus(targetIssue);
-        if (targetIssue.id === '190436221-26') {
-          this.log.info(targetStatus);
-        }
+
         return {
           type,
           target: targetIssue,
@@ -435,7 +433,7 @@ class Store {
 
   getIssueStatus(issue) {
     let currentStatus = [];
-    if (issue.pull_request) {
+    if (issue && issue.pull_request) {
 
       let status = this.statuses.statuses[issue.head.sha] || {};
 

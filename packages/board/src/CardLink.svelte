@@ -30,7 +30,7 @@
 
   $: repositoryName = `${repository.owner.login}/${repository.name}`;
 
-
+  $: status_width = (100/status.length-5)+'%' || '100%' ;
   $: cardUrl = `https://github.com/${ repositoryName }/issues/${ number }`;
 
   function handleSelection(qualifier, value) {
@@ -131,13 +131,15 @@
       {/each}
     </span>
   </div>
-   {#if status.length }
-        <span class =statsus>
-          {#each status as prStatus}
-          <a href={ prStatus.target_url } title={ prStatus.key } >
-              <Status state = {prStatus.state}/>
-          </a>
-          {/each}
-        </span>
+  {#if status.length }
+  <div class="status">
+    <span>
+    {#each status as prStatus}
+        <a href={ prStatus.target_url } title={ prStatus.key } >
+            <Status state = {prStatus.state} length={ status.length}/>
+        </a>
+    {/each}
+    </span>
+  </div>
         {/if}
 </div>

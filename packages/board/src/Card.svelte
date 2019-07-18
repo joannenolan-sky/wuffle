@@ -234,15 +234,17 @@
       </div>
     </div>
 
-      {#if status.length }
-      <span class="links" >
+    {#if status.length }
+    <div class="status">
+        <span>
         {#each status as prStatus}
-        <a href={ prStatus.target_url } title={ prStatus.key } >
-            <Status state = { prStatus.state }/>
-        </a>
+            <a href={ prStatus.target_url } title={ prStatus.key } >
+                <Status state = { prStatus.state } length={ status.length} />
+            </a>
         {/each}
-      </span>
-      {/if}
+        </span>
+    </div>
+    {/if}
 
     {#if shownLinks.length}
       <div class="board-card-links embedded">

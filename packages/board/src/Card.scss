@@ -15,7 +15,7 @@
   padding: 4px 8px;
 
   .header {
-    margin-bottom: 7px;
+    margin-bottom: 4px;
   }
 }
 
@@ -133,13 +133,10 @@
   }
 }
 .status {
-  box-sizing: border-box;
-  margin: 0;
-  position: relative;
-  display: inline-block;
-  height: 8px;
-
-}
-.status a {
-  height: 16px;
+  height: 5px;
+  line-height: 5px;
+  font-size: 5px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
