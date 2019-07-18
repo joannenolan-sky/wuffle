@@ -5,33 +5,18 @@ class Status {
 
   constructor(data) {
     this.statuses = (data && data.statuses) || {};
-    // this.statusIds = (data && data.statusIds) || {};
   }
 
-  // {
-  //   "statuses": [
-  //     {
-  //     "state": "success",
-  //     "target_url": "https://jenkins-core.tools.cosmic.sky/job/core/job/core-platform-config/job/_trigger/384/display/redirect",
-  //     "context": "core/core-platform-config/_trigger",
-  //     },
-  //     {
-  //     "state": "failure",
-  //     "target_url": "https://jenkins-core.tools.cosmic.sky/job/core/job/core-platform-config/job/kubernetes-resources/362/display/redirect",
-  //     "context": "kubernetes-resources",
-  //     }
-  //     ],
-  //   "sha": "a2ef08f9ece317ce6e7db880d5b9ab4117449dbb"
-  // }
-  addStatus(combinedStatusesForIssues) {
+  addMultipleStatus(combinedStatusesForIssues) {
     const {
       sha,
       statuses
     } = combinedStatusesForIssues;
 
-    const existingStatus = this.statuses[sha] = (this.statuses[sha] || {});
+    const existingStatus = this.statuses[sha] || {};
+    let contexts ={};
 
-    const contexts = statuses.forEach(function(status) {
+    statuses.forEach(function(status) {
       const {
         context,
         state,
@@ -45,15 +30,13 @@ class Status {
     });
 
     if (existingStatus) {
-      // get current contexts
-      const existingContextKeys = Object.keys(existingStatus);
-
-      const existingContext = Object.keys(contexts).find(contextKey => existingContextKeys.find(contextKey));
-      existingContext.forEach(key => {
-        delete existingContext[key];
-        existingStatus[key] = contexts[key];
-        this.statuses[sha] = existingStatus;
+      Object.keys(existingStatus).forEach(function(existingContextKey) {
+        if (existingStatus[existingContextKey]) {
+          delete existingStatus[existingContextKey];
+        }
+        existingStatus[existingContextKey] = contexts[existingContextKey];
       });
+      this.statuses[sha] = existingStatus;
     } else {
       this.statuses[sha] = contexts;
     }
@@ -64,57 +47,42 @@ class Status {
     };
   }
 
-  /**
-   * Get all links that have the issue as the source.
-   *
-   * @param {Number} sourceId
-   */
-  getBySha(sha) {
-    const status = this.statuses.statuses[sha] || {};
+  addStatusEvent(status) {
+    const {
+      sha,
+      key,
+      contexts
+    } = status;
 
-    return Object.values({
-      ...status
-    });
+    const existingStatus = this.statuses[sha] || {};
+
+    if (existingStatus) {
+      const existingContext = Object.keys(existingStatus).find(contextKey => contextKey === key);
+      if (existingContext) {
+        delete existingContext[key];
+      }
+      existingStatus[key] = contexts[key];
+      this.statuses[sha] = existingStatus;
+    } else {
+      this.statuses[sha] = contexts;
+    }
+    return this.statuses[sha];
   }
 
-  // getById(id) {
-  //   const sha = this.statusIds[id] || null;
-  //
-  //   let status = {};
-  //
-  //   if (sha) {
-  //   status = this.statuses[sha] || {};
-  //   }
-  //   return Object.values({
-  //   ...status
-  //   });
-  // }
 
-  /**
-   * Remove primary links that have the issue as the source.
-   *
-   * @param {Number} sourceId
-   *
-   * @return {Object} removedLinks
-   */
-  removeBySha(sha) {
-
-    const statuses = this.statuses.statuses[sha] || {};
-
-    for (const [_, status] of Object.entries(statuses)) {
-
+  getStatus(status) {
+    return Object.keys(status).map(function (key) {
       const {
-        id
-      } = status;
+        state,
+        target_url
+      } = status[key];
 
-      const inverseStatus = this.statusById[id] || {};
-
-      delete inverseStatus[`${id}`];
-    }
-
-    this.statuses[sha] = {};
-
-    return statuses;
+      return {
+        key: key,
+        state,
+        target_url
+      };
+    });
   }
 
   /**
