@@ -123,7 +123,9 @@ class Store {
     return this.statuses.statuses[sha];
   }
 
-  async updateIssue(issue, column) {
+  async updateIssue(issue, newColumn, newOrder) {
+
+    const t = Date.now();
 
     const {
       id,
@@ -143,33 +145,39 @@ class Store {
       throw new Error('{ repository } required');
     }
 
-    let order = this.getOrder(id);
+    const ident = issueIdent(issue);
 
-    if (!order) {
-      const firstIssue = this.issues[0];
+    this.log.debug({
+      issue: ident,
+      newColumn,
+      newOrder
+    }, 'issue update');
 
-      order = this.computeOrder(id, firstIssue && firstIssue.id, null);
+    const {
+      touchedIssues,
+      links
+    } = this.updateLinks(issue);
 
-      this.setOrder(id, order);
-    }
+    const column = newColumn || this.getIssueColumn(issue);
 
-    column = column || this.getIssueColumn(issue);
+    // automatically compute desired order unless
+    // the order is provided by the user
+    //
+    // this ensures the board is automatically pre-sorted
+    // as links are being created and removed on GitHub
+    const order = newOrder || this.computeLinkedOrder(
+      issue, column,
+      this.getOrder(id),
+      links
+    );
 
-    issue = {
+    issue = this.insertOrUpdateIssue({
       ...issue,
       order,
       column
-    };
+    });
 
-    this.log.info({ issue: issueIdent(issue), column, order }, 'update');
-
-    issue = this.insertOrUpdateIssue(issue);
-
-    const linkedIssues = this.updateLinks(issue);
-
-    // const status = this.updateStatusId(issue);
-
-    const updatedIssues = [ issue, ...linkedIssues ];
+    const updatedIssues = [ ...touchedIssues, issue ];
 
     for (const issue of updatedIssues) {
       this.updates.add(issue.id, {
@@ -181,6 +189,8 @@ class Store {
         }
       });
     }
+
+    this.log.info({ issue: ident, column, order, t: Date.now() - t }, 'issue updated');
 
     return issue;
   }
