@@ -54,7 +54,7 @@ class Status {
       contexts
     } = status;
 
-    const existingStatus = this.statuses[sha] || {};
+    const existingStatus = this.statuses[sha];
 
     if (existingStatus) {
       const existingContext = Object.keys(existingStatus).find(contextKey => contextKey === key);
@@ -66,12 +66,16 @@ class Status {
     } else {
       this.statuses[sha] = contexts;
     }
-    return this.statuses[sha];
+    return {
+      sha,
+      contexts
+    };
   }
 
 
-  getStatus(status) {
-    return Object.keys(status).map(function (key) {
+  getStatusBySha(sha) {
+    const status = this.statuses[sha] || {};
+    return Object.keys(status).map(function(key) {
       const {
         state,
         target_url
@@ -84,6 +88,11 @@ class Status {
       };
     });
   }
+
+  removeStatusBySha(sha) {
+    return this.statuses[sha] = {};
+  }
+
 
   /**
    * Serialize data to JSON so that it can
