@@ -13,7 +13,7 @@ class Status {
       statuses
     } = combinedStatusesForIssues;
 
-    const existingStatus = this.statuses[sha] || {};
+    const existingStatus = this.statuses[sha];
     let contexts ={};
 
     statuses.forEach(function(status) {
@@ -30,13 +30,18 @@ class Status {
     });
 
     if (existingStatus) {
-      Object.keys(existingStatus).forEach(function(existingContextKey) {
-        if (existingStatus[existingContextKey]) {
-          delete existingStatus[existingContextKey];
-        }
-        existingStatus[existingContextKey] = contexts[existingContextKey];
-      });
-      this.statuses[sha] = existingStatus;
+      if (Object.keys(existingStatus).length === 0) {
+        this.statuses[sha] = contexts;
+      } else {
+
+        Object.keys(existingStatus).forEach(function (existingContextKey) {
+          if (existingStatus[existingContextKey]) {
+            delete existingStatus[existingContextKey];
+          }
+          existingStatus[existingContextKey] = contexts[existingContextKey];
+        });
+        this.statuses[sha] = existingStatus;
+      }
     } else {
       this.statuses[sha] = contexts;
     }
