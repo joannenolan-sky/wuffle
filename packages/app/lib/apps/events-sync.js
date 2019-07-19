@@ -3,8 +3,7 @@ const {
   filterPull,
   filterStatus,
   filterIssueOrPull,
-  getIdentifier,
-  filterStatus
+  getIdentifier
 } = require('../filters');
 
 
