@@ -16,6 +16,7 @@
     Id,
     createLocalStore,
     createHistory,
+    // isClosingLink,
     isOpenOrMerged,
     isPull,
     periodic,
@@ -543,6 +544,12 @@
       [column.name]: !collapsed[column.name]
     };
   }
+
+  // function isClosingPull(item) {
+  //   return isPull(item) && isOpenOrMerged(item) && item.links.some(link => {
+  //     return isClosingLink(link) && itemsById[link.target.id];
+  //   });
+  // }
 
   function isPRWithLinks(item) {
     return isPull(item) && isOpenOrMerged(item) && item.links.length > 0;

@@ -9,6 +9,7 @@
   } from './util';
 
   export let item;
+  export let status;
 
   export let className = '';
 
@@ -44,11 +45,11 @@
     LINKED_BY: 'Related to'
   })[type] || type;
 
-  function handleSelection(qualifier, value) {
+  function handleSelection(qualifier, value, clickThrough=true) {
 
     return function(event) {
 
-      if (!hasModifier(event)) {
+      if (clickThrough && !hasModifier(event)) {
         return;
       }
 
@@ -83,41 +84,40 @@
 
 <div class="card-link">
   <div class="header">
-    <a href={ cardUrl }
-       target="_blank"
-       rel="noopener noreferrer"
-       class="issue-number"
-       on:click={ onSelect && handleSelection('ref', item.key) }
-       title="{ linkTitle } { repositoryName }#{ number }"
-     >
       {#if pull_request}
-        <PullRequestIcon item={ item } />
+        <PullRequestIcon item={ item } onClick={ onSelect && handleSelection('ref', item.key, false) } />
       {:else}
         {#if type === 'PARENT_OF'}
-          <LinkIcon name="issue" state={ state } />
+          <LinkIcon name="issue" state={ state } onClick={ onSelect && handleSelection('ref', item.key, false) } />
         {/if}
 
         {#if type === 'CHILD_OF'}
-          <LinkIcon name="epic" />
+          <LinkIcon name="epic" onClick={ onSelect && handleSelection('ref', item.key, false) } />
         {/if}
 
         {#if type === 'DEPENDS_ON' || type === 'CLOSED_BY'}
-          <LinkIcon name="depends-on" state={ state } />
+          <LinkIcon name="depends-on" state={ state } onClick={ onSelect && handleSelection('ref', item.key, false) } />
         {/if}
 
         {#if type === 'REQUIRED_BY' || type === 'CLOSES' }
           {#if state === 'open'}
-            <LinkIcon name="linked-to" />
+            <LinkIcon name="linked-to" onClick={ onSelect && handleSelection('ref', item.key, false) } />
           {:else}
-            <LinkIcon name="issue" state={ state } />
+            <LinkIcon name="issue" state={ state } onClick={ onSelect && handleSelection('ref', item.key, false) } />
           {/if}
         {/if}
 
         {#if type === 'LINKED_TO'}
-          <LinkIcon name="linked-to" />
+          <LinkIcon name="linked-to" onClick={ onSelect && handleSelection('ref', item.key, false) } />
         {/if}
       {/if}
 
+    <a href={ cardUrl }
+       target="_blank"
+       rel="noopener noreferrer"
+       class="issue-number"
+       title="{ linkTitle } { repositoryName }#{ number }"
+     >
       { number }
     </a>
 
@@ -137,13 +137,15 @@
       {/each}
     </span>
   </div>
-   {#if status.length }
-        <span class =statsus>
-          {#each status as prStatus}
-          <a href={ prStatus.target_url } title={ prStatus.key } >
-              <Status state = {prStatus.state}/>
-          </a>
-          {/each}
-        </span>
+  {#if status.length }
+  <div class="status">
+    <span>
+    {#each status as prStatus}
+        <a href={ prStatus.target_url } title={ prStatus.key } >
+            <Status state = {prStatus.state} length={ status.length}/>
+        </a>
+    {/each}
+    </span>
+  </div>
         {/if}
 </div>

@@ -34,7 +34,7 @@ class Status {
         this.statuses[sha] = contexts;
       } else {
 
-        Object.keys(existingStatus).forEach(function (existingContextKey) {
+        Object.keys(existingStatus).forEach(function(existingContextKey) {
           if (existingStatus[existingContextKey]) {
             delete existingStatus[existingContextKey];
           }

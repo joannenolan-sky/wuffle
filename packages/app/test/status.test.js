@@ -125,6 +125,18 @@ describe('status', function() {
 
   });
 
+  it('should return empty array if no associated status', function() {
+
+    // given no status for pull request
+    const status = new Status();
+
+    // when
+    const issueStatus = status.getStatusBySha('blah');
+
+    // then
+    expect(issueStatus).to.eql([]);
+
+  });
 
   it('should retrieve status with single status', function() {
 

@@ -11,6 +11,7 @@ const {
 } = require('./util/links');
 
 const { Links } = require('./links');
+const { Status } = require('./status');
 
 
 class Store {
@@ -28,6 +29,7 @@ class Store {
 
     this.updates = new Updates();
     this.links = new Links();
+    this.statuses = new Status();
 
     this.issuesByKey = {};
     this.issuesById = {};
@@ -38,6 +40,37 @@ class Store {
 
   computeIssueColumn(issue) {
     return this.columns.getIssueColumn(issue);
+  }
+
+  async updateStatus(status) {
+
+    const {
+      sha,
+      contexts,
+    } = status;
+
+    if (!sha) {
+      throw new Error('{ sha } required');
+    }
+
+    if (!contexts) {
+      throw new Error('{ context } required');
+    }
+
+    return this.statuses.addStatusEvent(status);
+  }
+
+  insertOrUpdateCombinedStatus(combinedStatusesForIssues) {
+    const {
+      sha
+    } = combinedStatusesForIssues;
+
+    const context = this.statuses.addMultipleStatus(combinedStatusesForIssues);
+
+    return {
+      sha,
+      context
+    };
   }
 
   async updateIssue(issue, newColumn, newOrder) {
@@ -101,7 +134,8 @@ class Store {
         type: 'update',
         issue: {
           ...issue,
-          links: this.getIssueLinks(issue)
+          links: this.getIssueLinks(issue),
+          statuses: this.getStatusByIssue(issue)
         }
       });
     }
@@ -355,10 +389,8 @@ class Store {
         } = link;
 
         const targetIssue = this.getIssueById(targetId);
-        const targetStatus = this.getIssueStatus(targetIssue);
-        if (targetIssue.id === '190436221-26') {
-          this.log.info(targetStatus);
-        }
+        const targetStatus = this.getStatusByIssue(targetIssue);
+
         return {
           type,
           target: targetIssue,
@@ -368,6 +400,15 @@ class Store {
     }
 
     return linked;
+  }
+
+  getStatusByIssue(issue) {
+    let currentStatus = [];
+    if (issue && issue.pull_request) {
+      currentStatus = this.statuses.getStatusBySha(issue.head.sha);
+    }
+
+    return currentStatus;
   }
 
   async removeIssueById(id) {
@@ -392,6 +433,9 @@ class Store {
     delete this.issueOrder[id];
     delete this.issueColumn[id];
 
+    if (issue.pull_request) {
+      this.statuses.removeStatusBySha(issue.head.sha);
+    }
     this.boardCache = null;
 
     this.issues = this.issues.filter(issue => issue.id !== id);
@@ -409,7 +453,8 @@ class Store {
         id,
         key,
         repository,
-        links: []
+        links: [],
+        statuses: []
       }
     });
   }
@@ -481,7 +526,8 @@ class Store {
       this.boardCache || groupBy(this.issues.map(issue => {
         return {
           ...issue,
-          links: this.getIssueLinks(issue)
+          links: this.getIssueLinks(issue),
+          statuses : this.getStatusByIssue(issue)
         };
       }), i => i.column)
     );
@@ -508,7 +554,8 @@ class Store {
       lastSync,
       issueOrder,
       issueColumn,
-      links
+      links,
+      statuses
     } = this;
 
     return JSON.stringify({
@@ -516,7 +563,8 @@ class Store {
       lastSync,
       issueOrder,
       issueColumn,
-      links: links.asJSON()
+      links: links.asJSON(),
+      statuses: statuses.asJSON()
     });
   }
 
@@ -530,7 +578,8 @@ class Store {
       lastSync,
       issueOrder,
       issueColumn,
-      links
+      links,
+      statuses
     } = JSON.parse(json);
 
     this.issues = issues || [];
@@ -540,6 +589,9 @@ class Store {
 
     if (links) {
       this.links.loadJSON(links);
+    }
+    if (statuses) {
+      this.statuses.loadJSON(statuses);
     }
 
     this.issuesById = this.issues.reduce((map, issue) => {

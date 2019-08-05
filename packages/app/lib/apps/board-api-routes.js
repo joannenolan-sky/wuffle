@@ -27,7 +27,8 @@ module.exports = async (
   router, logger,
   githubClient, authRoutes,
   userAccess, githubIssues,
-  search, columns
+  search,
+  columns
 ) => {
 
   const log = logger.child({

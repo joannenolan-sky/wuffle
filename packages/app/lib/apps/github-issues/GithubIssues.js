@@ -3,10 +3,6 @@ const {
   linkTypes
 } = require('../../util');
 
-const {
-  CLOSES
-} = linkTypes;
-
 
 function GithubIssues(logger, config, columns) {
 
@@ -91,7 +87,7 @@ function GithubIssues(logger, config, columns) {
       .then((issue) => issue && moveIssue(context, issue, newColumn, newAssignee));
   }
 
-  async function moveReferencedIssues(context, issue, newColumn, newAssignee) {
+  async function moveReferencedIssues(context, issue, newColumn, newAssignee, linkTypes) {
 
     // TODO(nikku): do that lazily, i.e. react to PR label changes?
     // would slower the movement but support manual moving-issue with PR
@@ -101,7 +97,7 @@ function GithubIssues(logger, config, columns) {
       owner: issueOwner
     } = context.repo();
 
-    const links = findLinks(issue, CLOSES).filter(link => {
+    const links = findLinks(issue, linkTypes).filter(link => {
       const {
         repo,
         owner
