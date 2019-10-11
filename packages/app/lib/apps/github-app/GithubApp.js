@@ -6,6 +6,7 @@ const PermissionLevels = {
 
 const RequiredPermissions = {
   checks: 'read',
+  status: 'read',
   contents: 'read',
   issues: 'write',
   metadata: 'read',
@@ -14,6 +15,7 @@ const RequiredPermissions = {
 
 const RequiredEvents = [
   'check_run',
+  'status',
   'create',
   'issues',
   'issue_comment',
