@@ -20,3 +20,7 @@
 
 #### Hide overflow from long milestone names
 - 'Tag.svelte' - hide overflow from milestone labels
+
+#### Bug Column Sorting(sort bug column by priority(P1-P4))
+- `BackgroundSync.js` - only run when doing a background sync
+- `store.js` - Add bug priority sorting
