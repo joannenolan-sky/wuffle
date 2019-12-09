@@ -17,6 +17,7 @@
     Id,
     createLocalStore,
     createHistory,
+    // isClosingLink,
     isOpenOrMerged,
     isPull,
     periodic,

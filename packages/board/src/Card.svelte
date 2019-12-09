@@ -1,10 +1,17 @@
 <script>
   import {
+    isOpen,
+    isMerged,
     isOpenOrMerged,
     isPull,
     hasModifier,
     noDuplicates
   } from './util';
+
+  // import {
+  //   isApplyFilterClick,
+  //   isAddFilterClick
+  // } from './shortcuts';
 
   import Tag from './components/Tag.svelte';
   import PullRequestIcon from './components/PullRequestIcon.svelte';
