@@ -126,10 +126,10 @@ function GithubIssues(logger, config, columns, store) {
   }
   function checkIssueForOpenLinkedPR(context, issue) {
     const {
-      repository,
+      repository
     } = context.payload;
 
-   const links = store.links.inverseLinks[repository.id + '-' + issue.number];
+    const links = store.links.inverseLinks[repository.id + '-' + issue.number];
 
     return Object.keys(links).map(linkKey => {
 

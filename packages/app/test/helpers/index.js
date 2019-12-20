@@ -3,6 +3,8 @@ const {
 } = require('async-didi');
 
 const Columns = require('../../lib/columns');
+const Store = require('../../lib/store');
+const Events = require('../../lib/events');
 
 function FakeLogger() {
 
@@ -32,7 +34,9 @@ const fakeConfig = {
 const fakeModule = {
   logger: [ 'type', FakeLogger ],
   config: [ 'value', fakeConfig ],
-  columns: [ 'type', Columns ]
+  columns: [ 'type', Columns ],
+  store: [ 'type', Store ],
+  events: [ 'type', Events ]
 };
 
 async function bootstrap(options) {
