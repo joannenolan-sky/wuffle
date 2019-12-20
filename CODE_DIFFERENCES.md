@@ -19,4 +19,9 @@
 - `PullRequestIcon.svelte` - pass in onClick to filter issue by icon
 
 #### Hide overflow from long milestone names
-- 'Tag.svelte' - hide overflow from milestone labels
+- `Tag.svelte` - hide overflow from milestone labels
+
+#### Add Metrics to Wuffle (http://localhost:3000/metrics)
+- `prometheus.js` - add basic event counter
+- `index.js` - register on startup
+- `events-sync.js` - add to webhook events

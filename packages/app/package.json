@@ -41,7 +41,9 @@
     "express-session": "^1.17.0",
     "min-dash": "^3.5.2",
     "p-defer": "^3.0.0",
-    "probot": "^9.6.4"
+    "probot": "^9.6.4",
+    "prom-client": "^11.5.3",
+    "response-time": "^2.3.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",

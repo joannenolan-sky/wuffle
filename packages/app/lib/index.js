@@ -38,6 +38,7 @@ const AsyncEvents = require('./events');
 
 const Columns = require('./columns');
 
+const PrometheusMetrics = require('./util/prometheus');
 
 module.exports = function(app) {
 
@@ -57,6 +58,8 @@ module.exports = function(app) {
     const config = loadConfig(log);
 
     const events = new AsyncEvents();
+
+    PrometheusMetrics.injectMetricsRoute(router);
 
     // load child apps //////////////
 
@@ -97,6 +100,7 @@ module.exports = function(app) {
       }
 
     }
+
 
     await events.emit('wuffle.start');
 

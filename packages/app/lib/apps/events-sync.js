@@ -5,6 +5,9 @@ const {
   getIdentifier
 } = require('../filters');
 
+const {
+  eventsCounter
+} = require('../util/prometheus');
 
 /**
  * This component updates the stored issues based on GitHub events.
@@ -32,6 +35,8 @@ module.exports = function(webhookEvents, store) {
       repository
     } = payload;
 
+    eventsCounter('issue', payload.action, issue.labels.map(label => label.name)||'');
+
     return store.updateIssue(filterIssue(issue, repository));
   });
 
@@ -46,6 +51,7 @@ module.exports = function(webhookEvents, store) {
       issue,
       repository
     } = payload;
+    eventsCounter('issue',payload.action, issue.labels.map(label => label.name)||'');
 
     return store.updateIssue(filterIssueOrPull(issue, repository));
   });
@@ -58,6 +64,7 @@ module.exports = function(webhookEvents, store) {
       issue,
       repository
     } = payload;
+    eventsCounter('issue',payload.action, issue.labels.map(label => label.name)||'');
 
     const id = getIdentifier(issue, repository);
 
@@ -85,6 +92,7 @@ module.exports = function(webhookEvents, store) {
       pull_request,
       repository
     } = payload;
+    eventsCounter('pull_request', payload.action, pull_request.labels.map(label => label.name)||'');
 
     return store.updateIssue(filterPull(pull_request, repository));
   });
