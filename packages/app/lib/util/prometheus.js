@@ -3,8 +3,8 @@ var Register = require('prom-client').register;
 var Counter = require('prom-client').Counter;
 
 const eventCounter = new Counter({
-  name: 'events',
-  help: 'Count of event and the labels for issues and pull requests',
+  name: 'eventCounter',
+  help: 'Event type and the labels for issues and pull requests',
   labelNames: ['type', 'event', 'labels']
 });
 
