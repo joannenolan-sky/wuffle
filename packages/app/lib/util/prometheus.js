@@ -1,22 +1,22 @@
-
 var Register = require('prom-client').register;
 var Counter = require('prom-client').Counter;
 
 const eventCounter = new Counter({
   name: 'eventCounter',
   help: 'Event type and the labels for issues and pull requests',
-  labelNames: ['type', 'event', 'labels']
+  labelNames: ['type', 'event', 'labels', 'repository']
 });
 
-function eventsCounter(type, event, labels) {
-
-  eventCounter.inc({ type: type, event: event, labels:labels });
+function eventsCounter(type, event, labels, repository) {
+  eventCounter.inc({
+    type: type,
+    event: event,
+    labels: labels.map(label => label.name),
+    repository: repository });
 }
+
 module.exports.eventsCounter = eventsCounter;
 
-/**
- * In order to have Prometheus get the data from this app a specific URL is registered
- */
 function injectMetricsRoute(router) {
   router.get('/metrics', (req, res) => {
     res.set('Content-Type', Register.contentType);

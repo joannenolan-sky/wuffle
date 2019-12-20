@@ -32,10 +32,11 @@ module.exports = function(webhookEvents, store) {
 
     const {
       issue,
-      repository
+      repository,
+      action
     } = payload;
 
-    eventsCounter('issue', payload.action, issue.labels.map(label => label.name)||'');
+    eventsCounter('issue', action, issue.labels, repository.name);
 
     return store.updateIssue(filterIssue(issue, repository));
   });
@@ -49,9 +50,10 @@ module.exports = function(webhookEvents, store) {
 
     const {
       issue,
-      repository
+      repository,
+      action
     } = payload;
-    eventsCounter('issue',payload.action, issue.labels.map(label => label.name)||'');
+    eventsCounter('issue', action, issue.labels, repository.name);
 
     return store.updateIssue(filterIssueOrPull(issue, repository));
   });
@@ -62,9 +64,10 @@ module.exports = function(webhookEvents, store) {
 
     const {
       issue,
-      repository
+      repository,
+      action
     } = payload;
-    eventsCounter('issue',payload.action, issue.labels.map(label => label.name)||'');
+    eventsCounter('issue', action, issue.labels, repository.name);
 
     const id = getIdentifier(issue, repository);
 
@@ -90,9 +93,10 @@ module.exports = function(webhookEvents, store) {
 
     const {
       pull_request,
-      repository
+      repository,
+      action
     } = payload;
-    eventsCounter('pull_request', payload.action, pull_request.labels.map(label => label.name)||'');
+    eventsCounter('pull_request', action, pull_request.labels, repository.name);
 
     return store.updateIssue(filterPull(pull_request, repository));
   });
