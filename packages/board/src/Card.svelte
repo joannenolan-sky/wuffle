@@ -9,6 +9,7 @@
   } from './util';
 
   // import {
+  //   hasModifier
   //   isApplyFilterClick,
   //   isAddFilterClick
   // } from './shortcuts';
