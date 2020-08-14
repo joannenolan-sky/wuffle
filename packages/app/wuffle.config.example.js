@@ -28,6 +28,7 @@ module.exports = {
   columns: [
     { name: 'Inbox', label: null },
     { name: 'Backlog', label: 'backlog', sorting: true },
+    { name: 'Bug', label: 'next-bug' }, // sorts labels P1,P2,P3,P4
     { name: 'Ready', label: 'ready', sorting: true },
     { name: 'In Progress', label: 'in progress', sorting: true },
     { name: 'Needs Review', label: 'needs review', sorting: true },

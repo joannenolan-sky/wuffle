@@ -2,12 +2,9 @@
   import {
     isOpenOrMerged,
     isPull,
+    hasModifier,
     noDuplicates
   } from './util';
-
-  import {
-    hasModifier
-  } from './shortcuts';
 
   import Tag from './components/Tag.svelte';
   import PullRequestIcon from './components/PullRequestIcon.svelte';
