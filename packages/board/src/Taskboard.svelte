@@ -319,6 +319,7 @@
       for (const item of columnItems) {
         const {
           id,
+          user,
           milestone,
           assignees,
           labels,
@@ -334,6 +335,12 @@
           const milestoneOptions = _filterOptions['milestone'] = _filterOptions['milestone'] || {};
 
           milestoneOptions[milestone.title] = true;
+        }
+
+        if (user) {
+          const authorOptions = _filterOptions['author'] = _filterOptions['author'] || {};
+
+          authorOptions[user.login] = true;
         }
 
         assignees.forEach(assignee => {
