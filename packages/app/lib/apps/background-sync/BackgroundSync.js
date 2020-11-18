@@ -306,7 +306,7 @@ We automatically synchronize all repositories you granted us access to via the G
 
     let removedIssues = {};
 
-    log.debug('expiration check start');
+    log.debug('cleanup start');
 
     for (const issue of issues) {
 
@@ -320,7 +320,7 @@ We automatically synchronize all repositories you granted us access to via the G
       let removed = false;
 
       if (!repositories[issue.repository.id]) {
-        log.debug({ issue: key }, 'repository removed');
+        log.debug({ issue: key }, 'cleanup -> repository removed');
 
         removed = true;
       }
@@ -328,7 +328,7 @@ We automatically synchronize all repositories you granted us access to via the G
       const updatedTime = new Date(updated_at).getTime();
 
       if (updatedTime < expiryTime) {
-        log.debug({ issue: key }, 'issue expired');
+        log.debug({ issue: key }, 'cleanup -> issue expired', { updatedTime, expiryTime });
 
         expired = true;
       }
@@ -338,7 +338,7 @@ We automatically synchronize all repositories you granted us access to via the G
       }
 
       try {
-        log.debug({ issue: key }, 'cleaning up');
+        log.debug({ issue: key }, 'cleanup -> removing issue');
         await store.removeIssueById(id);
 
         removedIssues[id] = issue;
@@ -347,7 +347,7 @@ We automatically synchronize all repositories you granted us access to via the G
       }
     }
 
-    log.debug({ t: Date.now() - now }, 'expiration check done');
+    log.debug({ t: Date.now() - now }, 'cleanup done');
 
     return removedIssues;
   }
